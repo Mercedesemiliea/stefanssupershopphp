@@ -655,6 +655,12 @@ textarea.input {
   border-top: 3px solid #D10024;
 }
 
+.nav-link-text-dark-email {
+  color: #D10024;
+  position: absolute;
+  right: 24%;
+}
+
 /*----------------------------*\
 	Main nav
 \*----------------------------*/

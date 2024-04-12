@@ -1,15 +1,23 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
-require_once('lib/PageTemplate.php');
+
+$userEmail = isset($_SESSION['user_email']) ? htmlspecialchars($_SESSION['user_email']) : 'Guest';
+require_once ('lib/PageTemplate.php');
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php if(isset($TPL->PageTitle)) { echo $TPL->PageTitle; } ?></title>
+    <title><?php if (isset($TPL->PageTitle)) {
+        echo $TPL->PageTitle;
+    } ?></title>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="/css/slick.css" />
@@ -22,8 +30,11 @@ require_once('lib/PageTemplate.php');
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <?php if(isset($TPL->ContentHead)) { include $TPL->ContentHead; } ?>
+    <?php if (isset($TPL->ContentHead)) {
+        include $TPL->ContentHead;
+    } ?>
 </head>
+
 <body>
     <!-- HEADER -->
     <header>
@@ -37,20 +48,21 @@ require_once('lib/PageTemplate.php');
                 </ul>
                 <ul class="header-links pull-right">
                     <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a  class="nav-link text-dark" href="/Account/Manage" title="Manage">Hello @User.Identity?.Name!</a>
-                            </li>
-                            <li class="nav-item">
-                                <a  class="nav-link text-dark" href="/Logout.php">Logout</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" href="/AccountRegister.php">Register</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" href="/AccountLogin.php">Login</a>
-                            </li>
-                        </ul>
-                        
+                        <a class="nav-link-text-dark-email" href="/Account/Manage" title="Manage">
+                            Hello <?php echo $userEmail; ?>!
+                        </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/Logout.php">Logout</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/AccountRegister.php">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/AccountLogin.php">Login </a>
+                        </li>
+                    </ul>
+
                 </ul>
             </div>
         </div>
@@ -129,7 +141,7 @@ require_once('lib/PageTemplate.php');
                                     </div>
                                     <div class="cart-btns">
                                         <a href="#">View Cart</a>
-                                        <a href="#">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
+                                        <a href="#">Checkout <i class="fa fa-arrow-circle-right"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -181,8 +193,10 @@ require_once('lib/PageTemplate.php');
         <div class="container">
 
 
-        <?php if(isset($TPL->ContentBody)) { include $TPL->ContentBody; } ?>
-            
+            <?php if (isset($TPL->ContentBody)) {
+                include $TPL->ContentBody;
+            } ?>
+
         </div>
         <!-- /container -->
     </div>
@@ -198,7 +212,8 @@ require_once('lib/PageTemplate.php');
                     <div class="col-md-3 col-xs-6">
                         <div class="footer">
                             <h3 class="footer-title">About Us</h3>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+                                incididunt ut.</p>
                             <ul class="footer-links">
                                 <li><a href="#"><i class="fa fa-map-marker"></i>1734 Stonecoal Road</a></li>
                                 <li><a href="#"><i class="fa fa-phone"></i>+021-95-51-84</a></li>
@@ -270,7 +285,9 @@ require_once('lib/PageTemplate.php');
                         <span class="copyright">
                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                             Copyright &copy;
-                            <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                            <script>document.write(new Date().getFullYear());</script> All rights reserved | This
+                            template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a
+                                href="https://colorlib.com" target="_blank">Colorlib</a>
                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                         </span>
                     </div>
@@ -291,4 +308,5 @@ require_once('lib/PageTemplate.php');
     <script src="/js/main.js"></script>
     @RenderSection("Scripts", false)
 </body>
+
 </html>
