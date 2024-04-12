@@ -41,7 +41,7 @@ require_once('lib/PageTemplate.php');
                                 <a  class="nav-link text-dark" href="/Account/Manage" title="Manage">Hello @User.Identity?.Name!</a>
                             </li>
                             <li class="nav-item">
-                                <a  class="nav-link text-dark" href="/Account/Logout" title="Manage">Logout</a>
+                                <a  class="nav-link text-dark" href="/Logout.php">Logout</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" href="/AccountRegister.php">Register</a>

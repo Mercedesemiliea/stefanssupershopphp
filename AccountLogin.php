@@ -1,7 +1,8 @@
 <?php
-
 require_once('lib/PageTemplate.php');
 include 'db.php';
+
+
 
 $error = '';
 
@@ -16,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($user && password_verify($password, $user['password'])) {
         // Spara användarens ID och IP-adress i sessionen
         $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_email'] = $user['email'];
         $_SESSION['ip_address'] = $_SERVER['REMOTE_ADDR'];
 
         // Lägg till post i login_sessions-tabellen
@@ -47,6 +49,9 @@ if (!isset($TPL)) {
 <div class="row">
                 <div class="col-md-12">
                     <div class="newsletter">
+
+  
+
                         <p>User<strong>&nbsp;LOGIN</strong></p>
                         <form action="AccountLogin.php" method="post">
                             <input class="input" type="email" name="email" placeholder="Enter Your Email">
@@ -61,6 +66,7 @@ if (!isset($TPL)) {
                         <?php if (isset($error)): ?>
                             <div class="error-message-lost-password"><?php echo $error; ?></div>
                                 <?php endif; ?>
+                                
                     </div>
                 </div>
             </div>

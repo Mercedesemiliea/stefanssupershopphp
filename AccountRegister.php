@@ -1,12 +1,10 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 include 'db.php';
 
-if(isset($_SESSION['registered_user_name'])) {
-    $registeredUserName = $_SESSION['registered_user_name'];
-} else {
-   
-    $registeredUserName = "Unknown User";
-}
+$registrationSuccess = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
@@ -32,7 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($sql);
         try {
 
-            $stmt->execute([$email, $hashed_password, $address, $postcode, $city, $name]);
+            if ($stmt->execute([$email, $hashed_password, $address, $postcode, $city, $name]));
+            $_SESSION['user_email'] = $email;
+            $_SESSION['registrationSuccess'] = true;
             header('Location: RegistrationConfirmation.php');
             exit;
         } catch (PDOException $e) {

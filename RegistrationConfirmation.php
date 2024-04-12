@@ -12,7 +12,14 @@ if (!isset($TPL)) {
     exit;
 }
 
-
+if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess']) {
+    $userEmail = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : 'an unknown email';
+    echo "<p>Hello, you have registered as " . htmlspecialchars($userEmail) . ".The registration was successful, and you are now registered at Stefans SuperShop.</p>";
+    unset($_SESSION['registrationSuccess']); 
+    unset($_SESSION['user_email']); 
+} else {
+    echo "<p>Registration failed or you have accessed this page directly without registering.</p>";
+}
 
 ?>
 <head>
