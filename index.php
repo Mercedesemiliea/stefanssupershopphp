@@ -1,5 +1,17 @@
 <?php
 require_once('lib/PageTemplate.php');
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+# Kontrollera om användaren är inloggad
+if (isset($_SESSION['user_id'])) {
+    $welcomeBackMessage = "<h2>Welcome back, User</h2>";
+} else {
+    $welcomeBackMessage = "";
+}
+
 # trick to execute 1st time, but not 2nd so you don't have an inf loop
 if (!isset($TPL)) {
     $TPL = new PageTemplate();
@@ -11,6 +23,9 @@ if (!isset($TPL)) {
 ?>
 <p>
 <div class="row">
+    <div class="wellcome back-user">
+        <?php echo $welcomeBackMessage; ?>
+    </div>
 
         <div class="col-md-4 col-xs-6">
             <div class="shop">

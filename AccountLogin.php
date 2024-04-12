@@ -1,32 +1,33 @@
 <?php
+
 require_once('lib/PageTemplate.php');
 include 'db.php';
 
+$error = '';
 
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-    $password = $_POST['password'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
     $stmt = $pdo->prepare("SELECT id, email, password FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    if ($user) {
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_email'] = $user['email'];
-            header('Location: index.php');
-            exit;
-        } else {
-            $error = 'Incorrect password or email';
-        }
+    if ($user && password_verify($password, $user['password'])) {
+        // Spara användarens ID och IP-adress i sessionen
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['ip_address'] = $_SERVER['REMOTE_ADDR'];
+
+        // Lägg till post i login_sessions-tabellen
+        $stmt = $pdo->prepare("INSERT INTO login_sessions (user_id, ip_address, login_time) VALUES (?, ?, NOW())");
+        $stmt->execute([$user['id'], $_SERVER['REMOTE_ADDR']]);
+
+        header('Location: index.php');
+        exit();
     } else {
-        $error = 'User with this email does not exist';
+        $error = 'Fel användarnamn eller lösenord';
     }
 }
-
 
 
 
