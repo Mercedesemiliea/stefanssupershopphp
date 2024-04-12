@@ -1,0 +1,15 @@
+.registration-container a {
+    text-decoration: underline;
+
+}
+
+.stefans-supershop-image {
+    background-image: url(../img/logo.png);
+    background-position: center;
+    background-size: cover;
+    height: 60px;
+    width: 300px;
+    position: absolute;
+    right: 5%;
+    top: 35%;
+}
