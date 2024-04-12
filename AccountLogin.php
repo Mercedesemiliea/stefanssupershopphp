@@ -1,7 +1,9 @@
 <?php
 require_once('lib/PageTemplate.php');
 include 'db.php';
-
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 
 $error = '';
@@ -18,8 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Spara användarens ID och IP-adress i sessionen
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
-        $_SESSION['ip_address'] = $_SERVER['REMOTE_ADDR'];
+        $_SESSION['loginSuccess'] = true; 
 
+
+       
         // Lägg till post i login_sessions-tabellen
         $stmt = $pdo->prepare("INSERT INTO login_sessions (user_id, ip_address, login_time) VALUES (?, ?, NOW())");
         $stmt->execute([$user['id'], $_SERVER['REMOTE_ADDR']]);
@@ -27,7 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header('Location: index.php');
         exit();
     } else {
-        $error = 'Fel användarnamn eller lösenord';
+        $error = 'Incorrect username or password';
+        error_log('Login failed for user . $email');
     }
 }
 

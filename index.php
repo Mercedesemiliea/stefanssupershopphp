@@ -8,6 +8,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 
 
+
 # trick to execute 1st time, but not 2nd so you don't have an inf loop
 if (!isset($TPL)) {
     $TPL = new PageTemplate();
@@ -20,15 +21,17 @@ if (!isset($TPL)) {
 <p>
 <div class="row">
 <div class="content-area">
+    <div class ="welcome-back-user">
     <?php
-   
-    if (isset($_SESSION['user_email'])) {
-        echo "<p>Hej, du har loggat in som " . htmlspecialchars($_SESSION['user_email']) . "</p>";
-    } else {
-        echo "<p>Please login to see this information.</p>";
-    }
-    ?>
 
+    if (isset($_SESSION['user_email'])) {
+        echo "<p>Welcome back! You are logged in as " . htmlspecialchars($_SESSION['user_email']) . ".</p>";
+    } else {
+        echo "<p>Please log in to view this information.</p>";
+    }
+    
+    ?>
+    </div>
         <div class="col-md-4 col-xs-6">
             <div class="shop">
                 <div class="shop-img">
