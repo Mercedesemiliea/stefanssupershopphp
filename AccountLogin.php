@@ -3,19 +3,25 @@ require_once('lib/PageTemplate.php');
 include 'db.php';
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
+    session_regenerate_id(true);
 }
 
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    if (!$email) {
+        $error = 'Invalid email address.';
+        error_log('Invalid email format.');
+        exit;
+    }
 
+    $password = $_POST['password'] ?? '';
     $stmt = $pdo->prepare("SELECT id, email, password FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
-
+    
     if ($user && password_verify($password, $user['password'])) {
         // Spara användarens ID och IP-adress i sessionen
         $_SESSION['user_id'] = $user['id'];
@@ -67,7 +73,7 @@ if (!isset($TPL)) {
                             <br/>
                             <button class="newsletter-btn"><i class="fa fa-envelope"></i> Login</button>
                         </form>
-                        <a href="">Lost password?</a>
+                        <a href="ForgotPassword.php">Lost password?</a>
                         <?php if (isset($error)): ?>
                             <div class="error-message-lost-password"><?php echo $error; ?></div>
                                 <?php endif; ?>

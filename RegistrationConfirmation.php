@@ -14,7 +14,8 @@ if (!isset($TPL)) {
 
 if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess']) {
     $userEmail = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : 'an unknown email';
-    echo "<p>Hello, you have registered as " . htmlspecialchars($userEmail) . ".The registration was successful, and you are now registered at Stefans SuperShop.</p>";
+    echo "<h1>Registration Confirmation</h1>";
+    echo "<p>You have registered as " . htmlspecialchars($userEmail) . ",the registration was successful, and you are now registered at Stefans SuperShop.</p>";
     unset($_SESSION['registrationSuccess']); 
     unset($_SESSION['user_email']); 
 } else {
@@ -23,12 +24,12 @@ if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess'])
 
 ?>
 <head>
-
+<link rel="stylesheet" href="/css/RegistrationConfirmation.css">
 <title>Registration Confirmation</title>
 </head>
 <body>
     <div class="registration-container">
-    <h1>Registration Confirmation</h1>
+    
     <?php if (isset($_SESSION['registered_user_name'])): ?>
         <p>Thank you for registering, <?php echo $_SESSION['registered_user_name']; ?>!</p>
     <p>A confirmation has been sent to your email address. Please check your inbox for further instructions.</p>
@@ -36,6 +37,6 @@ if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess'])
         <p>Thank you for registering!</p>
     <?php endif; ?> 
     <a href="AccountLogin.php">log in here</a>
-    <div class="stefans-supershop-image"></div>
+    
     </div>
 </body>

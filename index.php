@@ -18,6 +18,9 @@ if (!isset($TPL)) {
     exit;
 }
 ?>
+<head>
+    
+</head>
 <p>
 <div class="row">
 <div class="content-area">
@@ -26,8 +29,6 @@ if (!isset($TPL)) {
 
     if (isset($_SESSION['user_email'])) {
         echo "<p>Welcome back! You are logged in as " . htmlspecialchars($_SESSION['user_email']) . ".</p>";
-    } else {
-        echo "<p>Please log in to view this information.</p>";
     }
     
     ?>

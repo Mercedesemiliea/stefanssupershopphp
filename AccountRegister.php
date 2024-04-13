@@ -8,23 +8,27 @@ $registrationSuccess = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    if (!$email) {
+        die('Invalid email address.');
+    }
+
+
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirmPassword'] ?? '';
+    if ($password !== $confirmPassword) {
+        echo "Passwords do not match!";
+        return;
+    }
+
     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $postcode = filter_input(INPUT_POST, 'postcode', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $city = filter_input(INPUT_POST, 'city', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-    if (empty($email)) {
-        die('Email cannot be empty');
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    if(!$hashed_password) {
+        die('Could not hash the password');
     }
-
-    if ($password !== $confirmPassword) {
-        echo "Lösenorden matchar inte!";
-        return;
-    } else {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
 
         $sql = "INSERT INTO users (email, password, address, postcode, city, name) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);
@@ -39,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Could not insert the user: " . $e->getMessage());
         }
     }
-}
+
 require_once ('lib/PageTemplate.php');
 # trick to execute 1st time, but not 2nd so you don't have an inf loop
 if (!isset($TPL)) {
