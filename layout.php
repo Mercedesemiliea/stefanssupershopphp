@@ -52,15 +52,18 @@ require_once ('lib/PageTemplate.php');
                             Hello <?php echo $userEmail; ?>!
                         </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="/Logout.php">Logout</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="/AccountRegister.php">Register</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="/AccountLogin.php">Login </a>
-                        </li>
+                        <?php if (!isset($_SESSION['user_email'])): ?>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/AccountLogin.php">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/AccountRegister.php">Register</a>
+                            </li>
+                        <?php else: ?>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/Logout.php">Logout</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
 
                 </ul>
