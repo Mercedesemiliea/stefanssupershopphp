@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Europe/Stockholm');
 require_once('lib/PageTemplate.php');
 include 'db.php';
 

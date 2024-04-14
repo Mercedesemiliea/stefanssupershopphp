@@ -1,47 +1,54 @@
 <?php
+date_default_timezone_set('Europe/Stockholm');
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 require_once('lib/PageTemplate.php');
 include 'db.php';
 
-$passwordUpdated = false;
+
 $message = '';
-$tokenValid = false;
+$updateMessage = '';
+$token = $_GET['token'] ?? ''; // Hämta token från URL
 
-$error = '';
-
-if (isset($_GET['token'])) {
-    $token = $_GET['token'];
-    $stmt = $pdo->prepare("SELECT user_id FROM password_reset_requests WHERE token = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+if (!empty($token)) {
+    $stmt = $pdo->prepare("SELECT user_id, created_at FROM password_reset_requests WHERE token = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
     $stmt->execute([$token]);
-    if ($stmt->fetch()) {
-        $tokenValid = true;
-        
+    $tokenData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($tokenData) {
+        $createdAt = new DateTime($tokenData['created_at']);
+        $now = new DateTime();
+        if ($createdAt > $now->sub(new DateInterval('PT24H'))) {
+            // Token är giltig och inte utgången
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_password'], $_POST['confirm_password'])) {
+                if ($_POST['new_password'] === $_POST['confirm_password']) {
+                    $newHashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+                    $updateStmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+                    if ($updateStmt->execute([$newHashedPassword, $tokenData['user_id']])) {
+                        $message = "Your password has been updated successfully.";
+                       
+                        // Rensa token från databasen
+                        $pdo->prepare("DELETE FROM password_reset_requests WHERE token = ?")->execute([$token]);
+                       
+                        // Redirect eller logga in användaren här
+                        
+                    } else {
+                        $message = "Failed to update your password.";
+                    }
+                } else {
+                    $message = "Passwords do not match.";
+                }
+            }
+        } else {
+            $message = "Invalid or expired token.";
+        }
     } else {
         $message = "Invalid or expired token.";
-        exit;
     }
+} else {
+    $message = "No token provided.";
 }
-
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_password'], $_POST['confirm_password'], $_POST['token'])) {
-    if ($_POST['new_password'] !== $_POST['confirm_password']) {
-        echo "Lösenorden matchar inte.";
-    } else {
-        $token = isset($_GET['token']) ? $_GET['token'] : '';
-        $newHashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("UPDATE users u JOIN password_reset_requests prr ON u.id = prr.user_id SET u.password = ?, prr.token = NULL WHERE prr.token = ? AND prr.created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
-        if ($stmt->execute([$newHashedPassword, $token])) {
-            echo "Ditt lösenord har uppdaterats.";
-            $passwordUpdated = true; 
-        } else {
-            echo "Ogiltig eller utgången token.";
-        }
-    }
-}
-
 
 
 if (!isset($TPL)) {
@@ -59,15 +66,15 @@ if (!isset($TPL)) {
     <title>Reset Password</title>
 </head>
 <body> 
-    <?php if (!$passwordUpdated): ?>
+<?php if (empty($message)): ?>
     <div class="password-reset-requests-container">
    
         <h2>Reset Your Password</h2> 
-<form action="PasswordResetRequests.php" method="post">
-<input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
-    <input type="password" name="new_password" placeholder="Enter your new password" required>
-    <input type="password" name="confirm_password" placeholder="Confirm your new password" required>
+        <form action="PasswordResetRequests.php?token=<?= htmlspecialchars($token) ?>" method="post">
+    <input type="password" name="new_password" placeholder="New password" required>
+    <input type="password" name="confirm_password" placeholder="Confirm new password" required>
     <button type="submit">Reset Password</button>
+</form>
 
 </form>
 </div>
