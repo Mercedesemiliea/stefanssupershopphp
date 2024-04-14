@@ -19,7 +19,7 @@ if (!isset($TPL)) {
 }
 ?>
 <head>
-    
+<link rel="stylesheet" href="/css/RegistrationConfirmation.css">
 </head>
 <p>
 <div class="row">

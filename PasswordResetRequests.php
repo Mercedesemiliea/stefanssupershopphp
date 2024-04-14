@@ -6,22 +6,43 @@ require_once('lib/PageTemplate.php');
 include 'db.php';
 
 $passwordUpdated = false;
+$message = '';
+$tokenValid = false;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_password'], $_POST['confirm_password'])) {
+$error = '';
+
+if (isset($_GET['token'])) {
+    $token = $_GET['token'];
+    $stmt = $pdo->prepare("SELECT user_id FROM password_reset_requests WHERE token = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+    $stmt->execute([$token]);
+    if ($stmt->fetch()) {
+        $tokenValid = true;
+        
+    } else {
+        $message = "Invalid or expired token.";
+        exit;
+    }
+}
+
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_password'], $_POST['confirm_password'], $_POST['token'])) {
     if ($_POST['new_password'] !== $_POST['confirm_password']) {
-        $message = "Passwords do not match.";
+        echo "Lösenorden matchar inte.";
     } else {
         $token = isset($_GET['token']) ? $_GET['token'] : '';
         $newHashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
         $stmt = $pdo->prepare("UPDATE users u JOIN password_reset_requests prr ON u.id = prr.user_id SET u.password = ?, prr.token = NULL WHERE prr.token = ? AND prr.created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
         if ($stmt->execute([$newHashedPassword, $token])) {
-            $message = "Password updated successfully,";
-            $passwordUpdated = true;
+            echo "Ditt lösenord har uppdaterats.";
+            $passwordUpdated = true; 
         } else {
-            $message =  "Password update failed.";
+            echo "Ogiltig eller utgången token.";
         }
     }
 }
+
+
 
 if (!isset($TPL)) {
     $TPL = new PageTemplate();
