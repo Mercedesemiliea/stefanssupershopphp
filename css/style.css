@@ -94,6 +94,16 @@ ol {
   list-style: none
 }
 
+.error-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: red;
+  margin-top: 5px;
+  font-size: 1.3rem;
+}
+
+
 .welcome-back-user {
   padding: 10px;
   width: 95%;

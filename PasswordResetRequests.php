@@ -6,7 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once('lib/PageTemplate.php');
 include 'db.php';
 
-
+$passwordMismatch = false;
 $message = '';
 $passwordUpdated = false;
 $token = $_GET['token'] ?? ''; // Hämta token från URL
@@ -23,6 +23,8 @@ if (!empty($token)) {
             // Token är giltig och inte utgången
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_password'], $_POST['confirm_password'])) {
                 if ($_POST['new_password'] === $_POST['confirm_password']) {
+                    $passwordMismatch = true;  
+                    $message = "Passwords do not match.";
                     $newHashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
                     $updateStmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
                     if ($updateStmt->execute([$newHashedPassword, $tokenData['user_id']])) {
@@ -78,6 +80,9 @@ if (!isset($TPL)) {
     <input type="password" name="new_password" placeholder="New password" required>
     <input type="password" name="confirm_password" placeholder="Confirm new password" required>
     <button type="submit">Reset Password</button>
+    <?php if ($message): ?>
+        <p class="error-message">Passwords do not match. Please try again.</p>
+    <?php endif; ?>
 </form>
 
 </form>

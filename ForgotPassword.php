@@ -7,12 +7,14 @@ include 'db.php';
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+$error = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])){
     $userEmail = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
     if (!$userEmail) {
-        echo "Please enter a valid email address.";
+       
     } else {
+        $error = "Please enter a valid email address.";
         $userStmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $userStmt->execute([$userEmail]);
         $userId = $userStmt->fetchColumn();
@@ -58,12 +60,16 @@ if (!isset($TPL)) {
     <?php else: ?>
     </div>
     <h2>Reset Your Password</h2>
-    <p>Please enter your email address to receive a link to create a new password via email.</p>
+    <p>Please enter your email address to receive a link to create a new password.</p>
     <form action="ForgotPassword.php" method="post">
     <label for="email">Your Email Address:</label>
     <input type="email" id="email" name="email" required>
     <button type="submit" class="button-style">Send Reset Link</button>
+    <?php if ($error): ?>
+            <div class="error-message">Please enter a valid email address. </div>
+        <?php endif; ?>
 </form>
+
 
     <?php endif; ?>
 </div>

@@ -60,8 +60,7 @@ if (!isset($TPL)) {
 <div class="row">
                 <div class="col-md-12">
                     <div class="newsletter">
-
-  
+ 
 
                         <p>User<strong>&nbsp;LOGIN</strong></p>
                         <form action="AccountLogin.php" method="post">
@@ -75,7 +74,7 @@ if (!isset($TPL)) {
                         </form>
                         <a href="ForgotPassword.php">Lost password?</a>
                         <?php if (isset($error)): ?>
-                            <div class="error-message-lost-password"><?php echo $error; ?></div>
+                            <div class="error-message"><?php echo $error; ?></div>
                                 <?php endif; ?>
                                 
                     </div>
