@@ -18,6 +18,7 @@ require_once ('lib/PageTemplate.php');
     <title><?php if (isset($TPL->PageTitle)) {
         echo $TPL->PageTitle;
     } ?></title>
+    <link rel="icon" type="image/png" href="/img/apple-touch-icon-76x76.png">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="/css/slick.css" />
