@@ -1,0 +1,17 @@
+.registration-container {
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #f4f4f4;
+    border-left: 5px solid #D10024;
+    color: #333;
+    font-size: 16px;
+    border-radius: 0 2rem 2rem 0;
+
+}
+
+
+.registration-container h1 {
+    color: #D10024;
+    margin: 0;
+    margin-bottom: 1rem;
+}

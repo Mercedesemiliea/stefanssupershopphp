@@ -6,7 +6,7 @@ require_once('lib/PageTemplate.php');
 # trick to execute 1st time, but not 2nd so you don't have an inf loop
 if (!isset($TPL)) {
     $TPL = new PageTemplate();
-    $TPL->PageTitle = ">Registration Confirmation";
+    $TPL->PageTitle = "Registration Confirmation";
     $TPL->ContentBody = __FILE__;
     include "layout.php";
     exit;
@@ -36,7 +36,7 @@ if (isset($_SESSION['registrationSuccess']) && $_SESSION['registrationSuccess'])
     <?php else: ?>
         <p>Thank you for registering!</p>
     <?php endif; ?> 
-    <a href="AccountLogin.php">log in here</a>
+    
     
     </div>
 </body>
