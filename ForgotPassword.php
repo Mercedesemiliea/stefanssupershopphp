@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])){
 
 if (!isset($TPL)) {
     $TPL = new PageTemplate();
-    $TPL->PageTitle = "My Title";
+    $TPL->PageTitle = "Forgot Password";
     $TPL->ContentBody = __FILE__;
     include "layout.php";
     exit;

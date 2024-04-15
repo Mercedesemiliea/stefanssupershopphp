@@ -8,7 +8,7 @@ include 'db.php';
 
 
 $message = '';
-$updateMessage = '';
+$passwordUpdated = false;
 $token = $_GET['token'] ?? ''; // Hämta token från URL
 
 if (!empty($token)) {
@@ -26,12 +26,16 @@ if (!empty($token)) {
                     $newHashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
                     $updateStmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
                     if ($updateStmt->execute([$newHashedPassword, $tokenData['user_id']])) {
-                        $message = "Your password has been updated successfully.";
+                        $message = "Password updated successfully,";
+                        $passwordUpdated = true;
                        
                         // Rensa token från databasen
                         $pdo->prepare("DELETE FROM password_reset_requests WHERE token = ?")->execute([$token]);
+                         // Logga in användaren här
+                        $_SESSION['success_message'] = "Your password has been updated successfully. You can now login with your new password.";
+                        header('Location: SuccessfulUpdatePassword.php');
+                        exit;
                        
-                        // Redirect eller logga in användaren här
                         
                     } else {
                         $message = "Failed to update your password.";
@@ -53,7 +57,7 @@ if (!empty($token)) {
 
 if (!isset($TPL)) {
     $TPL = new PageTemplate();
-    $TPL->PageTitle = "My Title";
+    $TPL->PageTitle = "Password Reset Request";
     $TPL->ContentBody = __FILE__;
     include "layout.php";
     exit;
@@ -66,7 +70,7 @@ if (!isset($TPL)) {
     <title>Reset Password</title>
 </head>
 <body> 
-<?php if (empty($message)): ?>
+
     <div class="password-reset-requests-container">
    
         <h2>Reset Your Password</h2> 
@@ -78,12 +82,7 @@ if (!isset($TPL)) {
 
 </form>
 </div>
-<?php else: ?>
-    <div class="success-massage">
-    <p><?php echo $message; ?>  <a class="login" href="/AccountLogin.php">Login </a></p> 
-    </div>
-    
-    <?php endif; ?>
+
     
 </body>
 </html>
