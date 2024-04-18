@@ -26,23 +26,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $city = filter_input(INPUT_POST, 'city', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-    if(!$hashed_password) {
+    if (!$hashed_password) {
         die('Could not hash the password');
     }
 
-        $sql = "INSERT INTO users (email, password, address, postcode, city, name) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
-        try {
+    $sql = "INSERT INTO users (email, password, address, postcode, city, name) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = $pdo->prepare($sql);
+    try {
 
-            if ($stmt->execute([$email, $hashed_password, $address, $postcode, $city, $name]));
-            $_SESSION['user_email'] = $email;
-            $_SESSION['registrationSuccess'] = true;
-            header('Location: RegistrationConfirmation.php');
-            exit;
-        } catch (PDOException $e) {
-            die("Could not insert the user: " . $e->getMessage());
-        }
+        if ($stmt->execute([$email, $hashed_password, $address, $postcode, $city, $name]))
+            ;
+        $_SESSION['user_email'] = $email;
+        $_SESSION['registrationSuccess'] = true;
+        header('Location: RegistrationConfirmation.php');
+        exit;
+    } catch (PDOException $e) {
+        die("Could not insert the user: " . $e->getMessage());
     }
+}
 
 require_once ('lib/PageTemplate.php');
 # trick to execute 1st time, but not 2nd so you don't have an inf loop
@@ -56,7 +57,6 @@ if (!isset($TPL)) {
 ?>
 <p>
 <div class="row">
-
     <div class="row">
         <div class="col-md-12">
             <div class="newsletter">
@@ -78,13 +78,8 @@ if (!isset($TPL)) {
                     <br /><br />
                     <button class="newsletter-btn"><i class="fa fa-envelope"></i> Register</button>
                 </form>
-
             </div>
         </div>
     </div>
-
-
 </div>
-
-
 </p>
