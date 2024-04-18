@@ -12,6 +12,7 @@ require_once 'mailConfig.php';
 
 $error = "";
 $message = "";
+$linkSent = false;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
     $userEmail = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
@@ -29,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             $stmt = $pdo->prepare("INSERT INTO password_reset_requests (user_id, token, created_at) VALUES (?, ?, ?)");
             if ($stmt->execute([$userId, $token, $expiresFormatted])) {
                 $link = "http://localhost:8000/PasswordResetRequests.php?token=$token";
+                $linkSent = true;
+                
 
                 $mail = getMailer();
                 if ($mail) {
@@ -36,12 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
                     $mail->isHTML(true);
                     $mail->Subject = 'Password Reset Request';
                     $mail->Body = "Please click on the following link to reset your password: <a href='$link'>$link</a>";
+                    
 
                     if (!$mail->send()) {
                         echo 'Message could not be sent.';
                         echo 'Mailer Error: ' . $mail->ErrorInfo;
                     } else {
-                        echo 'Password reset link has been emailed to you.';
+                        $message ='Password reset link has been sent to your email address.';
                     }
                 }
             } else {
@@ -74,7 +78,7 @@ if (!isset($TPL)) {
 </head>
 <div class="forgot-password-container">
     <div class="forgot-password-link">
-        <?php if (!empty($message)): ?>
+        <?php if ($linkSent): ?>
             <p><?php echo $message; ?></p>
         <?php else: ?>
         </div>
