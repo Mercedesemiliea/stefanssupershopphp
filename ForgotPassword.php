@@ -35,8 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
 
                 $mail = getMailer();
                 if ($mail) {
-                    $mail->addAddress($userEmail);
+                    $mail->setFrom('stefans@superdupershop.com', 'Stefans SuperShop');
+                    $mail->FromName = "Hello";
+                    $mail->addAddress($_POST [$userEmail]);
+                    $mail->addReplyTo("noreply@ysuperdupershop.com", "No-Reply");
                     $mail->isHTML(true);
+                    
                     $mail->Subject = 'Password Reset Request';
                     $mail->Body = "Please click on the following link to reset your password: <a href='$link'>$link</a>";
                     
@@ -81,7 +85,7 @@ if (!isset($TPL)) {
         <?php if ($linkSent): ?>
             <p><?php echo $message; ?></p>
         <?php else: ?>
-        </div>
+    </div>
         <h2>Reset Your Password</h2>
         <p>Please enter your email address to receive a link to create a new password.</p>
         <form action="ForgotPassword.php" method="post">
