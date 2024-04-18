@@ -5,9 +5,6 @@ use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 
 
-require 'C:/composer/PHPMailer/src/Exception.php';
-require 'C:/composer/PHPMailer/src/PHPMailer.php';
-require 'C:/composer/PHPMailer/src/SMTP.php';
 
 
 function getMailer() {

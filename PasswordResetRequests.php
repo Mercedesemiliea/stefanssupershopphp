@@ -1,9 +1,10 @@
 <?php
+ob_start();
 date_default_timezone_set('Europe/Stockholm');
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-
+require_once 'mailConfig.php';
 require_once ('lib/PageTemplate.php');
 include 'db.php';
 
@@ -26,22 +27,15 @@ if (!empty($token)) {
             // Token är giltig och inte utgången
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_password'], $_POST['confirm_password'])) {
                 if ($_POST['new_password'] === $_POST['confirm_password']) {
-                    $passwordMismatch = true;
-                    $message = "Passwords do not match.";
                     $newHashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
                     $updateStmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
                     if ($updateStmt->execute([$newHashedPassword, $tokenData['user_id']])) {
-                        $message = "Password updated successfully,";
+                        $message = "Password updated successfully.";
                         $passwordUpdated = true;
-
-                        // Rensa token från databasen
                         $pdo->prepare("DELETE FROM password_reset_requests WHERE token = ?")->execute([$token]);
-                        // Logga in användaren här
                         $_SESSION['success_message'] = "Your password has been updated successfully. You can now login with your new password.";
                         header('Location: SuccessfulUpdatePassword.php');
                         exit;
-
-
                     } else {
                         $message = "Failed to update your password.";
                     }
@@ -58,6 +52,7 @@ if (!empty($token)) {
 } else {
     $message = "No token provided.";
 }
+
 
 
 if (!isset($TPL)) {

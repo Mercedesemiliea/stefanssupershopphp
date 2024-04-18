@@ -1,60 +1,60 @@
 <?php
-date_default_timezone_set('Europe/Stockholm');
-require_once ('lib/PageTemplate.php');
-include 'db.php';
-require 'vendor/autoload.php';
-
-
-
+ob_start();
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+date_default_timezone_set('Europe/Stockholm');
+require_once ('lib/PageTemplate.php');
+include 'db.php';
+require_once 'mailConfig.php';
+
+
 
 $error = "";
 $message = "";
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
     $userEmail = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-    if (!$userEmail) {
-        $error = "Please enter a valid email address.";
-    } else {
-        
+    if ($userEmail) {
         $userStmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $userStmt->execute([$userEmail]);
         $userId = $userStmt->fetchColumn();
 
         if ($userId) {
-            $token = bin2hex(random_bytes(32)); // Generate a secure token
+            $token = bin2hex(random_bytes(32));
             $expires = new DateTime('NOW');
-            $expires->add(new DateInterval('PT24H')); // Token expires after 24 hours
+            $expires->add(new DateInterval('PT24H'));
             $expiresFormatted = $expires->format('Y-m-d H:i:s');
 
-
-            // Insert token into the database
-            $stmt = $pdo->prepare("INSERT INTO password_reset_requests (user_id, token, created_at) VALUES ((SELECT id FROM users WHERE email = ?), ?, ?)");
-            if ($stmt->execute([$userEmail, $token, $expiresFormatted])) {
+            $stmt = $pdo->prepare("INSERT INTO password_reset_requests (user_id, token, created_at) VALUES (?, ?, ?)");
+            if ($stmt->execute([$userId, $token, $expiresFormatted])) {
                 $link = "http://localhost:8000/PasswordResetRequests.php?token=$token";
-                $message = "Click on the following link to reset your password: <a href='$link'>$link</a>";
 
                 $mail = getMailer();
-                $mail->setFrom('no-reply@yourdomain.com', 'Your Application Name');
-                $mail->addAddress($userEmail);  // Add a recipient
-                $mail->isHTML(true);  // Set email format to HTML
-                $mail->Subject = 'Password Reset Link';
-                $mail->Body    = "Here is the password reset link: <a href='$link'>Reset Password</a>";
+                if ($mail) {
+                    $mail->addAddress($userEmail);
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Password Reset Request';
+                    $mail->Body = "Please click on the following link to reset your password: <a href='$link'>$link</a>";
 
-                $mail->send();
+                    if (!$mail->send()) {
+                        echo 'Message could not be sent.';
+                        echo 'Mailer Error: ' . $mail->ErrorInfo;
+                    } else {
+                        echo 'Password reset link has been emailed to you.';
+                    }
+                }
             } else {
-                $message = "An error occurred. Please try again.";
+                echo "An error occurred. Please try again.";
             }
-
         } else {
-            $error = "No account foun with that email address.";
+            echo "No account found with that email address.";
         }
-    
+    } else {
+        echo "Please enter a valid email address.";
     }
 }
+
 
 
 if (!isset($TPL)) {
