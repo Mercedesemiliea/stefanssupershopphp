@@ -3,6 +3,7 @@ date_default_timezone_set('Europe/Stockholm');
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
 require_once ('lib/PageTemplate.php');
 include 'db.php';
 
@@ -10,6 +11,8 @@ $passwordMismatch = false;
 $message = '';
 $passwordUpdated = false;
 $token = $_GET['token'] ?? ''; // Hämta token från URL
+
+
 
 if (!empty($token)) {
     $stmt = $pdo->prepare("SELECT user_id, created_at FROM password_reset_requests WHERE token = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
