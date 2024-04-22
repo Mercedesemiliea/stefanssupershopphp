@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
                 if ($mail) {
                     $mail->setFrom('stefans@superdupershop.com', 'Stefans SuperShop');
                     $mail->FromName = "Hello";
-                    $mail->addAddress($_POST [$userEmail]);
+                    $mail->addAddress($userEmail);
                     $mail->addReplyTo("noreply@ysuperdupershop.com", "No-Reply");
                     $mail->isHTML(true);
                     
