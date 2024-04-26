@@ -32,24 +32,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
                 $link = "http://localhost:8000/PasswordResetRequests.php?token=$token";
                 $linkSent = true;
                 
+                
+                
 
                 $mail = getMailer();
                 if ($mail) {
+                    $mail->From = "stefans@superdupershop.com"; 
                     $mail->setFrom('stefans@superdupershop.com', 'Stefans SuperShop');
                     $mail->FromName = "Hello";
                     $mail->addAddress($userEmail);
-                    $mail->addReplyTo("noreply@ysuperdupershop.com", "No-Reply");
+                    $mail->addReplyTo("noreply@superdupershop.com", "No-Reply");
                     $mail->isHTML(true);
-                    
+
                     $mail->Subject = 'Password Reset Request';
-                    $mail->Body = "Please click on the following link to reset your password: <a href='$link'>$link</a>";
-                    
+                    $mail->Body = '
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #D10024;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .content h1 {
+            color: #D10024;
+        }
+        .content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            color: #333;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            text-align: center;
+            color: #D10024;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Password Reset Request</h1>
+        <p>Please click on the following link to reset your password:</p>
+        <p><a href="' . $link . '">' . $link . '</a></p>
+    </div>
+    <div class="footer">
+        Regards,<br>
+        Stefans SuperShop Team
+    </div>
+</body>
+</html>
+';
+
+
 
                     if (!$mail->send()) {
                         echo 'Message could not be sent.';
                         echo 'Mailer Error: ' . $mail->ErrorInfo;
+                        
                     } else {
-                        $message ='Password reset link has been sent to your email address.';
+                        $message = 'Password reset link has been sent to your email address.';
                     }
                 }
             } else {
@@ -85,7 +130,7 @@ if (!isset($TPL)) {
         <?php if ($linkSent): ?>
             <p><?php echo $message; ?></p>
         <?php else: ?>
-    </div>
+        </div>
         <h2>Reset Your Password</h2>
         <p>Please enter your email address to receive a link to create a new password.</p>
         <form action="ForgotPassword.php" method="post">
