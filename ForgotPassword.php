@@ -31,13 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             if ($stmt->execute([$userId, $token, $expiresFormatted])) {
                 $link = "http://localhost:8000/PasswordResetRequests.php?token=$token";
                 $linkSent = true;
-                
-                
-                
+
+
+
 
                 $mail = getMailer();
                 if ($mail) {
-                    $mail->From = "stefans@superdupershop.com"; 
+                    $mail->From = "stefans@superdupershop.com";
                     $mail->setFrom('stefans@superdupershop.com', 'Stefans SuperShop');
                     $mail->FromName = "Hello";
                     $mail->addAddress($userEmail);
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
                     if (!$mail->send()) {
                         echo 'Message could not be sent.';
                         echo 'Mailer Error: ' . $mail->ErrorInfo;
-                        
+
                     } else {
                         $message = 'Password reset link has been sent to your email address.';
                     }
